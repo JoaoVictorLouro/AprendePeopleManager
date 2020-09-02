@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   List,
   ListItem,
@@ -10,7 +10,7 @@ import {
 
 import DeleteIcon from "@material-ui/icons/Delete";
 import { usePeopleListState } from "../state/people-list.state";
-import { fetchPeople, deletePerson } from "../services/people.service";
+import { deletePerson } from "../services/people.service";
 import { Person } from "../models/person.model";
 import { useSnackbar } from "notistack";
 import { PeopleListActionInProgress } from "./people-list-action-in-progress.component";
@@ -37,37 +37,15 @@ export const PeopleList: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const {
-    setPeople,
     people,
     selectedPerson,
     selectPerson,
+    refreshList,
+    errorRefreshing,
+    isRefreshing,
   } = usePeopleListState();
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [errorRefreshing, setErrorRefreshing] = useState(false);
 
-  const refreshList = useCallback(() => {
-    setIsRefreshing(true);
-    setErrorRefreshing(false);
-    fetchPeople()
-      .then((people) => {
-        setPeople(people);
-      })
-      .catch((e) => {
-        enqueueSnackbar(
-          "Looks like there was an error fetching the people list, please try again later...",
-          {
-            variant: "error",
-          }
-        );
-        console.error(e);
-        setErrorRefreshing(true);
-        setTimeout(refreshList, 10000);
-      })
-      .finally(() => {
-        setIsRefreshing(false);
-      });
-  }, [setPeople, setIsRefreshing, enqueueSnackbar]);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (selectedPerson === null) {

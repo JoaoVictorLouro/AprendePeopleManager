@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Typography, makeStyles, Button } from "@material-ui/core";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import { usePeopleListState } from "../state/people-list.state";
+import { makeNewPerson } from "../models/person.model";
 
 const usePeopleListEmptyStyles = makeStyles((theme) => ({
   EmptyListContainer: {
@@ -29,11 +30,9 @@ export const PeopleListEmpty: React.FC = () => {
   const { selectPerson } = usePeopleListState();
 
   const addNewPerson = () => {
-    selectPerson({
-      firstName: "",
-      lastName: "",
-    });
+    selectPerson(makeNewPerson());
   };
+
   return (
     <Container className={EmptyListContainer}>
       <PersonAddIcon className={AddMoreIcon} />

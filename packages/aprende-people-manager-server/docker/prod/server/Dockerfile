@@ -2,7 +2,7 @@
 
 FROM node:12 as build_container
 
-WORKDIR /server
+WORKDIR /opt/server
 
 COPY package*.json ./
 COPY prisma ./
@@ -15,12 +15,12 @@ RUN yarn build
 
 FROM node:12
 
-COPY --from=build_container /server/node_modules ./node_modules
-COPY --from=build_container /server/package*.json ./
-COPY --from=build_container /server/dist ./dist
+COPY --from=build_container /opt/server/node_modules ./node_modules
+COPY --from=build_container /opt/server/package*.json ./
+COPY --from=build_container /opt/server/prisma ./
+COPY --from=build_container /opt/server/dist ./dist
 
-EXPOSE 3000
-
-RUN yarn start:migrations
+EXPOSE 3001
+EXPOSE 80
 
 CMD ["yarn", "start:prod"]

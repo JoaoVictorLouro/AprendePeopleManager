@@ -7,6 +7,7 @@ import { makeStyles, Backdrop } from "@material-ui/core";
 import { generateStrangers } from "../services/people.service";
 import { usePeopleListState } from "../state/people-list.state";
 import { useSnackbar } from "notistack";
+import { makeNewPerson } from "../models/person.model";
 
 const useListActionsSpeedDialStyles = makeStyles((theme) => ({
   InlineContainer: {
@@ -35,7 +36,7 @@ export const PeopleListActionsSpeedDial: React.FC = () => {
     InlineContainerBackdrop,
     ActionsClosedContainer,
   } = useListActionsSpeedDialStyles();
-  const { selectPerson } = usePeopleListState();
+  const { refreshList, selectPerson } = usePeopleListState();
 
   const onGenerateStrangersClick = async () => {
     try {
@@ -43,7 +44,7 @@ export const PeopleListActionsSpeedDial: React.FC = () => {
       enqueueSnackbar("Strangers generated succesfully!", {
         variant: "success",
       });
-      selectPerson(null);
+      refreshList();
     } catch (e) {
       enqueueSnackbar(
         "Failed to generate strangers, please try again shortly!",
@@ -56,10 +57,7 @@ export const PeopleListActionsSpeedDial: React.FC = () => {
   };
 
   const onCreatePersonClick = async () => {
-    selectPerson({
-      firstName: "",
-      lastName: "",
-    });
+    selectPerson(makeNewPerson());
   };
 
   const toggleOpen = () =>
