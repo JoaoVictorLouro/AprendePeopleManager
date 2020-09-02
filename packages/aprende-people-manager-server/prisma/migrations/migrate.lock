@@ -1,0 +1,4 @@
+# Prisma Migrate lockfile v1
+
+20200901010048-create_person_table
+20200902004922-remove_unique_restrictions

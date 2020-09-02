@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  aprende_people_manager_db:
+    build:
+      context: ./packages/aprende-people-manager-server/docker/dev/db
+      dockerfile: ./Dockerfile
+    container_name: "aprende_people_manager_db"
+    environment:
+      - POSTGRES_PASSWORD=root
+    ports:
+      - "5444:5432"
+
+  aprende_people_manager_server:
+    build:
+      context: ./packages/aprende-people-manager-server
+      dockerfile: ./docker/dev/server/Dockerfile
+    container_name: "aprende_people_manager_server"
+    environment:
+      - DATABASE_URL=postgresql://postgres:root@aprende_people_manager_db:5432/people_manager
+    depends_on:
+      - aprende_people_manager_db
+    ports:
+      - "3001:3001"
+    links:
+      - "aprende_people_manager_db:aprende_people_manager_db"
+    volumes:
+      - type: bind
+        source: ./packages/aprende-people-manager-server/src
+        target: /opt/server/src
+    tty: true
+    stdin_open: true
+
+  aprende_people_manager_webapp:
+    build:
+      context: ./packages/aprende-people-manager-webapp
+      dockerfile: ./Dockerfile
+    container_name: "aprende_people_manager_webapp"
+    depends_on:
+      - aprende_people_manager_server
+    ports:
+      - "3000:3000"
+    links:
+      - "aprende_people_manager_server:aprende_people_manager_server"
+    volumes:
+      - type: bind
+        source: ./packages/aprende-people-manager-webapp/src
+        target: /opt/webapp/src
+    tty: true
+    stdin_open: true
